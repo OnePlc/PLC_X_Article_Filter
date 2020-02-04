@@ -15,16 +15,20 @@
 
 namespace OnePlace\Article\Filter;
 
+use Application\Controller\CoreEntityController;
 use Laminas\Mvc\MvcEvent;
+use Laminas\EventManager\EventInterface as Event;
 use Laminas\ModuleManager\ModuleManager;
+use Laminas\Db\Adapter\AdapterInterface;
+use OnePlace\Article\Filter\Controller\FilterController;
 
 class Module {
     /**
      * Module Version
      *
-     * @since 1.0.0
+     * @since 1.0.1
      */
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     /**
      * Load module config file
@@ -34,6 +38,18 @@ class Module {
      */
     public function getConfig() : array {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    public function onBootstrap(Event $e)
+    {
+        // This method is called once the MVC bootstrapping is complete
+        $application = $e->getApplication();
+        $container    = $application->getServiceManager();
+        $oDbAdapter = $container->get(AdapterInterface::class);
+        $tableGateway = $container->get(\OnePlace\Article\Model\ArticleTable::class);
+
+        # Register Filter Plugin Hook
+        CoreEntityController::addHook('article-index-before-paginator',(object)['sFunction'=>'filterIndexByState','oItem'=>new FilterController($oDbAdapter,$tableGateway,$container)]);
     }
 
     /**
@@ -48,7 +64,6 @@ class Module {
                     $tableGateway = $container->get(\OnePlace\Article\Model\ArticleTable::class);
 
                     # hook start
-                    CoreEntityController::addHook('article-index-before-paginator',(object)['sFunction'=>'filterIndexByState','oItem'=>new Controller\FilterController($oDbAdapter,$tableGateway,$container)]);
                     # hook end
                     return new Controller\FilterController(
                         $oDbAdapter,

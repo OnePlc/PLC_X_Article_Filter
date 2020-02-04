@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace OnePlace\Article\Controller;
+namespace OnePlace\Article\Filter\Controller;
 
 use Application\Controller\CoreEntityController;
 use Application\Model\CoreEntityModel;
@@ -65,7 +65,6 @@ class FilterController extends CoreEntityController {
         ]);
 
         if(count($oTag) > 0) {
-            echo 'tag found';
             $oTag = $oTag->current();
 
             # Get Entity Tag for State Filter "available"
@@ -75,7 +74,6 @@ class FilterController extends CoreEntityController {
                 'tag_idfs'=>$oTag->Tag_ID,
             ]);
             if(count($oEntityTag) > 0) {
-                echo 'entity tag found';
                 $oEntityTag = $oEntityTag->current();
                 $oPaginator = $this->oTableGateway->fetchAll(true,['state_idfs'=>$oEntityTag->Entitytag_ID]);
                 return $oPaginator;
