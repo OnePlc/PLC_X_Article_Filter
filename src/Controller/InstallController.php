@@ -19,11 +19,12 @@ namespace OnePlace\Article\Filter\Controller;
 
 use Application\Controller\CoreUpdateController;
 use Application\Model\CoreEntityModel;
-use OnePlace\Article\Filter\Model\FilterTable;
+use OnePlace\Article\Model\AddressTable;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\ResultSet\ResultSet;
+use OnePlace\Article\Model\ArticleTable;
 
 class InstallController extends CoreUpdateController {
     /**
@@ -33,7 +34,7 @@ class InstallController extends CoreUpdateController {
      * @param FilterTable $oTableGateway
      * @since 1.0.0
      */
-    public function __construct(AdapterInterface $oDbAdapter, FilterTable $oTableGateway, $oServiceManager)
+    public function __construct(AdapterInterface $oDbAdapter, ArticleTable $oTableGateway, $oServiceManager)
     {
         $this->oTableGateway = $oTableGateway;
         $this->sSingleForm = 'articlefilter-single';
@@ -51,47 +52,8 @@ class InstallController extends CoreUpdateController {
     {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('article');
-
         $oRequest = $this->getRequest();
-
         if(! $oRequest->isPost()) {
-
-            $bTableExists = false;
-
-            try {
-                $this->oTableGateway->fetchAll(false);
-                $bTableExists = true;
-            } catch (\RuntimeException $e) {
-
-            }
-
-            return new ViewModel([
-                'bTableExists' => $bTableExists,
-                'sVendor' => 'oneplace',
-                'sModule' => 'oneplace-article-filter',
-            ]);
-        } else {
-            $sSetupConfig = $oRequest->getPost('plc_module_setup_config');
-
-            $sSetupFile = 'vendor/oneplace/oneplace-article-filter/data/install.sql';
-            if(file_exists($sSetupFile)) {
-                echo 'got install file..';
-                $this->parseSQLInstallFile($sSetupFile,CoreUpdateController::$oDbAdapter);
-            }
-
-            if($sSetupConfig != '') {
-                $sConfigStruct = 'vendor/oneplace/oneplace-article-filter/data/structure_'.$sSetupConfig.'.sql';
-                if(file_exists($sConfigStruct)) {
-                    echo 'got struct file for config '.$sSetupConfig;
-                    $this->parseSQLInstallFile($sConfigStruct,CoreUpdateController::$oDbAdapter);
-                }
-                $sConfigData = 'vendor/oneplace/oneplace-article-filter/data/data_'.$sSetupConfig.'.sql';
-                if(file_exists($sConfigData)) {
-                    echo 'got data file for config '.$sSetupConfig;
-                    $this->parseSQLInstallFile($sConfigData,CoreUpdateController::$oDbAdapter);
-                }
-            }
-
             $oModTbl = new TableGateway('core_module', CoreUpdateController::$oDbAdapter);
             $oModTbl->insert([
                 'module_key' => 'oneplace-article-filter',
@@ -100,17 +62,9 @@ class InstallController extends CoreUpdateController {
                 'label' => 'onePlace Article Filter',
                 'vendor' => 'oneplace',
             ]);
-
-            try {
-                $this->oTableGateway->fetchAll(false);
-                $bTableExists = true;
-            } catch (\RuntimeException $e) {
-
-            }
-            $bTableExists = false;
-
-            $this->flashMessenger()->addSuccessMessage('Article Filter DB Update successful');
+            $this->flashMessenger()->addSuccessMessage('Article Filter install successful');
             $this->redirect()->toRoute('application', ['action' => 'checkforupdates']);
+
         }
     }
 }

@@ -30,7 +30,7 @@ class Module {
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.2.1';
+    const VERSION = '1.0.2.2';
 
     /**
      * Load module config file
@@ -81,7 +81,7 @@ class Module {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\InstallController(
                         $oDbAdapter,
-                        $container->get(Model\FilterTable::class),
+                        $container->get(\OnePlace\Article\Model\ArticleTable::class),
                         $container
                     );
                 },
