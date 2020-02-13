@@ -82,6 +82,6 @@ class FilterController extends CoreEntityController {
 
         # $oPaginator = $this->oTableGateway->fetchAll(true,['created_by'=>CoreEntityController::$oSession->oUser->getID()]);
 
-        return false;
+        return [];
     }
 }

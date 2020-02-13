@@ -23,7 +23,6 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\AdapterInterface;
 use OnePlace\Article\Filter\Controller\FilterController;
-use OnePlace\Article\Model\ArticleTable;
 
 class Module {
     /**
@@ -31,7 +30,7 @@ class Module {
      *
      * @since 1.0.0
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.0.2.1';
 
     /**
      * Load module config file
@@ -49,7 +48,7 @@ class Module {
         $application = $e->getApplication();
         $container    = $application->getServiceManager();
         $oDbAdapter = $container->get(AdapterInterface::class);
-        $tableGateway = $container->get(FilterTable::class);
+        $tableGateway = $container->get(\OnePlace\Article\Model\ArticleTable::class);
 
         # Register Filter Plugin Hook
         CoreEntityController::addHook('article-index-before-paginator',(object)['sFunction'=>'filterIndexByState','oItem'=>new FilterController($oDbAdapter,$tableGateway,$container)]);

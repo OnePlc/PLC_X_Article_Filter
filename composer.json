@@ -2,7 +2,7 @@
     "name": "oneplace/oneplace-article-filter",
     "description": "onePlace Article Filter",
     "type": "oneplace-plugin",
-    "version": "1.0.2",
+    "version": "1.0.2.1",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
