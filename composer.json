@@ -2,14 +2,14 @@
     "name": "oneplace/oneplace-article-filter",
     "description": "onePlace Article Filter",
     "type": "oneplace-plugin",
-    "version": "1.0.1",
+  "version": "1.0.2",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
         "mvc",
         "oneplace-module",
         "oneplace",
-        "skeleton",
+        "filter",
         "framework"
     ],
     "require-dev": {

@@ -2,10 +2,10 @@
 /**
  * Module.php - Module Class
  *
- * Module Class File for Article Module
+ * Module Class File for Article Filter Plugin
  *
  * @category Config
- * @package Article
+ * @package Article\Filter
  * @author Verein onePlace
  * @copyright (C) 2020  Verein onePlace <admin@1plc.ch>
  * @license https://opensource.org/licenses/BSD-3-Clause
@@ -19,16 +19,19 @@ use Application\Controller\CoreEntityController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\EventManager\EventInterface as Event;
 use Laminas\ModuleManager\ModuleManager;
+use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\TableGateway\TableGateway;
 use Laminas\Db\Adapter\AdapterInterface;
 use OnePlace\Article\Filter\Controller\FilterController;
+use OnePlace\Article\Model\ArticleTable;
 
 class Module {
     /**
      * Module Version
      *
-     * @since 1.0.1
+     * @since 1.0.0
      */
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.2';
 
     /**
      * Load module config file
@@ -46,11 +49,15 @@ class Module {
         $application = $e->getApplication();
         $container    = $application->getServiceManager();
         $oDbAdapter = $container->get(AdapterInterface::class);
-        $tableGateway = $container->get(\OnePlace\Article\Model\ArticleTable::class);
+        $tableGateway = $container->get(FilterTable::class);
 
         # Register Filter Plugin Hook
         CoreEntityController::addHook('article-index-before-paginator',(object)['sFunction'=>'filterIndexByState','oItem'=>new FilterController($oDbAdapter,$tableGateway,$container)]);
     }
+
+    /**
+     * Load Models
+     */
 
     /**
      * Load Controllers
@@ -58,7 +65,6 @@ class Module {
     public function getControllerConfig() : array {
         return [
             'factories' => [
-                # Plugin Example Controller
                 Controller\FilterController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     $tableGateway = $container->get(\OnePlace\Article\Model\ArticleTable::class);
@@ -71,7 +77,16 @@ class Module {
                         $container
                     );
                 },
+                # Installer
+                Controller\InstallController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\InstallController(
+                        $oDbAdapter,
+                        $container->get(Model\FilterTable::class),
+                        $container
+                    );
+                },
             ],
         ];
-    }
+    } # getControllerConfig()
 }
