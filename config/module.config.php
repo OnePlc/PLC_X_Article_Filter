@@ -1,11 +1,11 @@
 <?php
 /**
- * module.config.php - Skeleton Config
+ * module.config.php - Filter Config
  *
- * Main Config File for Skeleton Module
+ * Main Config File for Article Filter Plugin
  *
  * @category Config
- * @package Skeleton
+ * @package Article\Filter
  * @author Verein onePlace
  * @copyright (C) 2020  Verein onePlace <admin@1plc.ch>
  * @license https://opensource.org/licenses/BSD-3-Clause
@@ -20,4 +20,26 @@ use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
+    # Filter Module - Routes
+    'router' => [
+        'routes' => [
+            'article-filter-setup' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/article/filter/setup',
+                    'defaults' => [
+                        'controller' => Controller\InstallController::class,
+                        'action'     => 'checkdb',
+                    ],
+                ],
+            ],
+        ],
+    ], # Routes
+
+    # View Settings
+    'view_manager' => [
+        'template_path_stack' => [
+            'article-filter' => __DIR__ . '/../view',
+        ],
+    ],
 ];
